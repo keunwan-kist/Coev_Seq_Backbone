@@ -1,0 +1,21 @@
+# editor / backup files
+*~
+*.swp
+.DS_Store
+
+# staging area (local only)
+_raw/
+
+# transient files written by the pipeline
+pop*.fas
+*.pbslog
+*.o[0-9]*
+*.e[0-9]*
+job_refine.txt
+resfile_list.txt
+
+# generated models and intermediate results
+CoevOpt_str/
+Candidate_pdbs/
+*.score.sc
+summary.*

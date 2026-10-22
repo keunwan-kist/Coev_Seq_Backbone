@@ -1,0 +1,5 @@
+# Keep LF endings: these scripts run on Linux clusters, where CRLF breaks
+# shebang lines and here-docs.
+* text=auto eol=lf
+*.pmrf binary
+*.pdb -text

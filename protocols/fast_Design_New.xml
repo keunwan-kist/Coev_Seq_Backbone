@@ -1,0 +1,70 @@
+<ROSETTASCRIPTS>
+	<SCOREFXNS>
+		<ScoreFunction name="r15" weights="ref2015" />
+		<ScoreFunction name="r15_soft" weights="ref2015_soft" />
+		<ScoreFunction name="r15_cst" weights="ref2015" >
+			<Reweight scoretype="coordinate_constraint" weight="1" />
+        </ScoreFunction>
+
+		<ScoreFunction name="r15_cart" weights="ref2015_cart" />
+		ScoreFunction name="r15_cart" weights="ref2015" >
+            Reweight scoretype="pro_close" weight="0.0" />
+            Reweight scoretype="cart_bonded" weight="0.625" />
+        /ScoreFunction>
+
+	</SCOREFXNS>
+	
+	<TASKOPERATIONS>
+		<InitializeFromCommandline name="ifcl"/>
+		<RestrictToRepacking name="rtr" />
+		<ReadResfile name="rrf"/>
+		<LimitAromaChi2 name="limchi"/>
+	</TASKOPERATIONS>
+
+    <FILTERS>
+        <ScoreType name="score_filter" scorefxn="r15" score_type="total_score" threshold="-1" confidence="0" />
+        BuriedUnsatHbonds name="unsats_filter" jump_number="0" cutoff="20" scorefxn="r15" confidence="0" />
+		<AverageDegree name="deg" distance_threshold="8" confidence="0"/>
+		<Rmsd name="rmsd" chains="A" superimpose_on_all="1" superimpose="1" confidence="0" />
+		
+		<PreProline name="prepro" use_statistical_potential="0" confidence="0" />
+		<Geometry name="geom" confidence="0" />
+		<CavityVolume name="cav" confidence="0" />
+
+    </FILTERS>
+
+	<MOVERS>
+		<MinMover name="min_cart" scorefxn="r15_cart" chi="1" bb="1" cartesian="1" type="lbfgs_armijo_nonmonotone" tolerance="0.00001" max_iter="1000" />
+		<MinMover name="min" scorefxn="r15" chi="1" bb="0" type="lbfgs_armijo_nonmonotone" tolerance="0.00001" max_iter="1000" />
+		<MinMover name="min_rb" scorefxn="r15" chi="1" bb="1" type="lbfgs_armijo_nonmonotone" tolerance="0.00001" max_iter="1000" />
+		
+		<PackRotamersMover name="packrot_soft" scorefxn="r15_soft" task_operations="ifcl,rrf,limchi"/>	
+		<PackRotamersMover name="packrot" scorefxn="r15" task_operations="ifcl,rrf,limchi"/>	
+		
+		<FastRelax name="frelax" scorefxn="r15_cst" task_operations="ifcl,rrf,limchi" disable_design="false"/>
+		<AddConstraintsToCurrentConformationMover name="add_cst" />
+	</MOVERS>
+	
+	<APPLY_TO_POSE>
+	</APPLY_TO_POSE>
+	<PROTOCOLS>
+		
+		<Add mover="min_cart" />
+		<Add mover="packrot_soft" />
+		<Add mover="min_rb" />
+		<Add mover="packrot" />
+		<Add mover="min" />
+		
+		<Add mover="min_cart" />
+
+		<Add filter="score_filter" />
+		<Add filter="rmsd" />
+		<Add filter="deg" />
+		Add filter="prepro" />
+		<Add filter="geom" />
+		<Add filter="cav" />
+
+	</PROTOCOLS>
+	<OUTPUT scorefxn="r15" />
+
+</ROSETTASCRIPTS>

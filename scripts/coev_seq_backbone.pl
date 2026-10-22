@@ -17,6 +17,8 @@ Options:
 -pair        PMRF coev pair file (required)
 -bsite       Binding site file (required)
 -resf_outfn  RESFILE out file
+-pymol_script  path to coevpair_line.py; if given, the matching 'run' line
+             is printed with the PyMOL pair list (optional)
 -h           Show help message
 
 Example:
@@ -55,6 +57,7 @@ GetOptions("a3m:s"=>\$args{a3m},
            "coev_pair_seq_dist:i"=>\$args{coev_pair_seq_dist},
            "exclude_bsite:i"=>\$args{exclude_bsite},
            "ncf_var_std:s"=>\$args{ncf_var_std},
+           "pymol_script:s"=>\$args{pymol_script},
 					 'h:s'   => \$args{h},
 					 'help:s'   => \$args{help},
 ) or die "Incorrect usage!\n";
@@ -470,7 +473,7 @@ for(my $i=0;$i<@coev_to_bs;$i++){
 }
 my $coevpair_ary_str = join(",",@coevpair_ary);
 print "\ncoevolving_pairs = [$coevpair_ary_str]\n";
-print 'run C:\D\Programs\pymol_rc\pymol_scripts_python3-version\coevpair_line.py'."\n";
+print "run $args{pymol_script}\n" if(defined $args{pymol_script});
 print "[example in pymol]: draw_coevo_lines_cgo( obj_name=\"chCom\", chain_id=\"$chain\", pairs=coevolving_pairs, line_color=cmd.get_color_tuple(\"cyan\"), line_radius=0.5, cgo_object_name=\"coevo_lines\" )\n";
 my @coevpair_ary_sites = sort {$a<=>$b} keys %coevpair_ary_site;
 print "select coevoing_pairs_site,resi ",join("+",@coevpair_ary_sites),"\n\n";
